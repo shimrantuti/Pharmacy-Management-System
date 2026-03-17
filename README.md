@@ -185,4 +185,7 @@ Aspiring Full Stack Developer 🚀
 
 GitHub: [https://github.com/shimrantuti](https://github.com/shimrantuti)
 
+##  If you like this project
+Give it a ⭐ on GitHub and share your feedback!
+
 ---

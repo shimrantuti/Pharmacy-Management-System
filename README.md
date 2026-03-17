@@ -149,15 +149,14 @@ http://127.0.0.1:8000/admin/
 ### 🔑 Authentication & Login
 ![Login Page](https://github.com/user-attachments/assets/07951ef6-c8f7-4346-b217-33a3321b8fe2)
 
-### 📊 Inventory Dashboard
-![Inventory Dashboard](https://github.com/user-attachments/assets/b093a3ff-2f2f-465c-bfa7-6f9f1fb457d2)
+### 🖥️ Dashboard Overview
+![Pharmacy Dashboard](https://github.com/user-attachments/assets/b093a3ff-2f2f-465c-bfa7-6f9f1fb457d2)
 
-### 📦 Batch & Stock Management
-![Stock Management](https://github.com/user-attachments/assets/7a129264-7016-4d4c-84e0-27b305885121)
+### 📦 Inventory & Batch Management
+![Inventory Management](https://github.com/user-attachments/assets/7a129264-7016-4d4c-84e0-27b305885121)
 
 ### 🧾 Order Processing (Tabular Inline)
 ![Order Processing](https://github.com/user-attachments/assets/3e31e504-7200-4b8a-ad34-a7c0ed927421)
-
 
 
 ## 📌 Project Highlights

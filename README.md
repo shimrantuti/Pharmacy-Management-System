@@ -146,7 +146,7 @@ http://127.0.0.1:8000/admin/
 
 ## 📷 Screenshots
 
-### 🔑 Authentication & Login
+### 🔑 Admin Login
 ![Login Page](https://github.com/user-attachments/assets/07951ef6-c8f7-4346-b217-33a3321b8fe2)
 
 ### 🖥️ Dashboard Overview

@@ -1,4 +1,4 @@
-Pharmacy Management System
+## PHARMACY-MANAGEMENT-SYSTEM
 
 I built this system to learn how real-world pharmacy inventory works.
 It handles everything from adding medicines to tracking batches and processing customer orders.

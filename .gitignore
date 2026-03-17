@@ -1,0 +1,14 @@
+# Database
+db.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+
+# IDE settings
+.vscode/
+.idea/

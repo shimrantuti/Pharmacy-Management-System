@@ -146,10 +146,10 @@ http://127.0.0.1:8000/admin/
 
 ## 📷 Screenshots
 
-###  Admin Login
+### Dashboard Overview
 ![Login Page](https://github.com/user-attachments/assets/07951ef6-c8f7-4346-b217-33a3321b8fe2)
 
-###  Dashboard Overview
+###  Admin Login
 ![Pharmacy Dashboard](https://github.com/user-attachments/assets/b093a3ff-2f2f-465c-bfa7-6f9f1fb457d2)
 
 ###  Inventory & Batch Management

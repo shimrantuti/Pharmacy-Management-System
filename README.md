@@ -160,6 +160,15 @@ http://127.0.0.1:8000/admin/
 ![Order Processing](https://github.com/user-attachments/assets/3e31e504-7200-4b8a-ad34-a7c0ed927421)
 
 
+## Future Improvements
+
+* I'm currently working on adding Low Stock Alerts because it's a must-have for pharmacies.
+* Working on making the Admin Dashboard even more user-friendly.
+* Plan to implement REST APIs using DRF for mobile and frontend integration.
+* JWT Authentication
+* Frontend integration (React)
+* Expiry notifications
+
 ##  Project Highlights
 
 * Real-world **pharmacy workflow simulation**

@@ -9,10 +9,9 @@ from  inventory.models import Order
 from  inventory.models import OrderItem
 
 
-# Register your models here.
+# Registeration of models 
 
 #   APPLY INLINE PROPERTY IN INVENTORY
-
 
 class BatchInline(admin.TabularInline):
     model=Batch

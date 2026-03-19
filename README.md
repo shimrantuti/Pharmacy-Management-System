@@ -15,23 +15,61 @@ erDiagram
     ORDER ||--o{ ORDER_ITEM : "contains"
     BATCH ||--o{ ORDER_ITEM : "sold_from"
 
+    CATEGORY {
+         int id PK
+         string name
+         text description
+    }
     MEDICINE {
+        int id PK
         string medicine_name
         string generic_name
+        text description
+        int category_id FK
     }
+    SUPPLIER {
+         int id PK
+        string sup_name
+        string contact_person
+        string phone_number
+        string email
+        text address
+        string gst_numbe
+    }  
+
+     PURCHASEORDER {
+        int id PK
+        date purchase_date
+        decimal total_amount
+        int supplier_id FK
+    } 
+    
     BATCH {
         string batch_no
         date expiry_date
+        int initial_quantity
         int current_quantity
+        decimal purchase_price
+        decimal mrp
+        int medicine_id FK
+        int purchaseOrder_id FK
     }
-    PURCHASEORDER {
-        date purchase_date
+   
+    ORDER {
+        int id PK
+        string customer_name
+        string phone_no
+        datetime timestamp
         decimal total_amount
     }
-    ORDER {
-        string customer_name
-        datetime timestamp
+    ORDERITEM {
+    int id PK
+        int order_id FK
+        int batch_id FK
+        int quantity
+        decimal price_at_sale
     }
+           
 ##  Key Features
 
 ###  Inventory Management

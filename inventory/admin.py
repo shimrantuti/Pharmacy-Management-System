@@ -19,6 +19,12 @@ class MedicineAdmin(admin.ModelAdmin):
     search_fields = ('medicine_name', 'generic_name')
     list_filter = ('category',)
     # inlines=[BatchInline]
+    
+    #Search field at the top
+    search_fields = ('medicine_name', 'generic_name')
+
+    #  Filter sidebar on the right
+    list_filter = ('category',)
 
 
 class CategoryAdmin(admin.ModelAdmin):

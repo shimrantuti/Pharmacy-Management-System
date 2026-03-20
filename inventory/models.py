@@ -1,20 +1,47 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.db.models import Sum
 
 # Create your models here.
 class Category(models.Model):
     name=models.CharField(max_length=100)
     description=models.TextField(blank=True)
 
+    class Meta:
+        verbose_name_plural = "Categories"
+
     def __str__(self):
         return self.name
-
+    
 
 class Medicine(models.Model):
     medicine_name=models.CharField(max_length=200,unique=True)
     generic_name=models.CharField(max_length=200)
     description=models.TextField()
+    low_stock_threshold=models.PositiveIntegerField(default = 0)
     category=models.ForeignKey("inventory.Category", on_delete=models.CASCADE)
+
+
+    @property
+    def total_available_stock(self):
+        today=timezone.now().date()
+        valid_batches = self.batch_set.filter(expiry_date__gt=today)
+        total=valid_batches.aggregate(Sum("current_quantity"))["current_quantity__sum"]
+        return total or 0
+    
+    def stock_status(self):
+        total=self.total_available_stock
+        if total == 0:
+            return "❌ Out of Stock"
+        
+        elif total < self.low_stock_threshold:
+            return f"⚠️ Low Stock!! "
+        
+        return "✅ In Stock"
+    
+    class Meta:
+        verbose_name_plural="Medicines"
 
     def __str__(self):
         return self.medicine_name
@@ -26,6 +53,10 @@ class Supplier(models.Model):
     email=models.EmailField(blank=True)
     address=models.TextField()
     gst_number=models.CharField(max_length=15,blank=True)
+
+    class Meta:
+        verbose_name_plural = "Suppliers"
+
 
     def __str__(self):
         return self.sup_name
@@ -52,10 +83,12 @@ class Batch(models.Model):
 
     class Meta:
         ordering = ['batch_no'] # Fixes the Autocomplete requirement
+        verbose_name_plural="Batches"
 
     def __str__(self):
-        # We removed "self.batch.batch_no" which was causing the crash
+       
         return f"{self.medicine.medicine_name} - {self.batch_no}"
+    
 
 class Order(models.Model):
     customer_name=models.CharField(max_length=100,null=False)

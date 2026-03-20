@@ -25,6 +25,7 @@ erDiagram
         string medicine_name
         string generic_name
         text description
+        int low_stock_threshold
         int category_id FK
     }
     SUPPLIER {
@@ -104,6 +105,20 @@ erDiagram
 
 ---
 
+### Low Stock Alert
+
+* Instant Visibility: Use of emojis (✅, ⚠️, ❌) allows for a quick "at-a-glance" check of inventory levels.
+
+* Proactive Ordering: The Low Stock Alert (⚠️) ensures you restock before a medicine completely runs out.
+
+* Automated Safety: It automatically hides expired batches, ensuring only safe-to-sell stock is shown.
+
+* Zero Manual Work: The status updates itself in real-time, removing the risk of human calculation errors.
+
+* Better Customer Service: Staff can instantly see what is Out of Stock (❌), preventing them from promising unavailable    items.
+
+
+
 ##  Tech Stack
 
 * **Backend:** Django, Django REST Framework
@@ -173,8 +188,7 @@ http://127.0.0.1:8000/admin/
 
 ##  Future Improvements
 
-* I'm currently working on adding Low Stock Alerts because it's a must-have for pharmacies.
-* Working on making the Admin Dashboard even more user-friendly.
+* I'm currently working on improving Low Stock Alerts because it's a must-have for pharmacies.
 * Plan to implement REST APIs using DRF for mobile and frontend integration.
 * JWT Authentication
 * Frontend integration (React)

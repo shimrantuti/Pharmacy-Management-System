@@ -229,6 +229,19 @@ http://127.0.0.1:8000/admin/
 
 ---
 
+🛠️TECH STACK AND SKILL
+
+> Backend: Python , Django , Django REST Framework (DRF).
+
+> Database: SQLite, ER Modeling, Database Normalization (1NF, 2NF, 3NF).
+
+> Frontend (Basics): HTML, CSS(Customizing Django Admin UI),Javascript(Basic).
+
+> DevOps & Tools: Git, GitHub, VS Code, Postman (API Testing).
+
+> Learning Goal (Current): Integrating JavaScript/React for a dynamic frontend      
+
+
 ## 🙌 Author
 
 **Shimran Tuti**

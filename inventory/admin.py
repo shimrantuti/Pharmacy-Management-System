@@ -11,7 +11,7 @@ from  inventory.models import Medicine , Category ,Supplier ,Batch ,  PurchaseOr
 class BatchInline(admin.TabularInline):
     model=Batch
     fields=['batch_no','manufacture_date','expiry_date','initial_quantity','current_quantity','medicine','purchase_price','mrp','purchaseOrder']
-    
+
 
 @admin.register(Medicine)   
 class MedicineAdmin(admin.ModelAdmin):

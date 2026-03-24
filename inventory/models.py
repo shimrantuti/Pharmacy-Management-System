@@ -65,6 +65,7 @@ class PurchaseOrder(models.Model):
     purchase_date=models.DateField(auto_now_add=True)
     supplier=models.ForeignKey(Supplier,on_delete=models.PROTECT)
     total_amount=models.DecimalField(max_digits=10,decimal_places=2)
+    
 
     def __str__(self):
         return f"{self.supplier.sup_name}-{self.purchase_date}"
@@ -111,24 +112,38 @@ class OrderItem(models.Model):
     quantity=models.PositiveIntegerField()
     price_at_sale=models.DecimalField(max_digits=15,decimal_places=2)
 
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
-        # Store the original quantity to handle stock adjustments during edits
-        self._original_qty = self.quantity if self.pk else 0
+    def clean(self):
+        if self.pk:
+            original_qty= OrderItem.objects.get(pk=self.pk).quantity
+        else:
+            original_qty=0  
+
+         #calculate change in quantity
+        self._delta = self.quantity - original_qty 
+
+        #Prevents sale if requested quantity exceeds  current stock 
+        if self._delta > 0 and self._delta > self.batch.current_quantity :
+              raise ValidationError(f"Insufficient stock in Batch {self.batch.batch_no}!")
+           
 
     def save(self,*args,**kwargs):
-        if not self.price_at_sale and self.batch:
-            self.price_at_sale=self.batch.mrp
-        
-        #calcualte change in quantity
-        delta = self.quantity - self._original_qty     
 
-        #Prevents sale if requested quantity exceeds  current stock  
-        if self.batch.current_quantity < delta:
-            raise ValidationError(f"Insufficint stock in Batch {self.batch.batch_no}!")
-        
+        self.full_clean()
+
+        if self.pk:
+            original_qty= OrderItem.objects.get(pk=self.pk).quantity
+        else:
+            original_qty=0  
+            
+        #use delta calulate in clean()
+        delta=getattr(self,"_delta",None)
+    
         #update the stoch in the batch table
         self.batch.current_quantity -= delta
+
+        
+        if not self.price_at_sale and self.batch.mrp:
+            self.price_at_sale=self.batch.mrp
         self.batch.save()
         super().save(*args,**kwargs)
 

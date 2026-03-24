@@ -3,6 +3,7 @@
 
 ![Python](https://img.shields.io/badge/python-3.13-blue?logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/django-6.0-green?logo=django&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-yellow)
 ![GitHub stars](https://img.shields.io/github/stars/shimrantuti/Pharmacy-Management-System?style=social)
 
 . A real-world pharmacy workflow simulation built with Django & DRF.

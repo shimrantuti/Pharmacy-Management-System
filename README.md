@@ -167,7 +167,9 @@ http://127.0.0.1:8000/admin/
 ##  Project Highlights
 
 . Real-world **pharmacy workflow simulation**
+
 . Clean and normalized database design
+
 . Scalable backend using Django REST Framework
 
 

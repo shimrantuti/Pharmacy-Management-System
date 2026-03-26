@@ -7,8 +7,10 @@
 ![GitHub stars](https://img.shields.io/github/stars/shimrantuti/Pharmacy-Management-System?style=social)
 
 . A real-world pharmacy workflow simulation built with Django & DRF.
-  This project simulates a real‑world pharmacy workflow, built to strengthen my backend      and database design skills.
-. It handles everything from adding medicines to tracking batches, handling low stock        status and processing customer orders.
+
+. This project simulates a real‑world pharmacy workflow, built to strengthen my backend and database design skills.
+  
+. It handles everything from adding medicines to tracking batches, handling low stock status and processing customer         orders.
 
 ---
 
@@ -25,32 +27,42 @@
 ###  Inventory Management
 
 . Manage medicines with categories and detailed descriptions
+
 . Track **multiple batches per medicine**
+
 . Monitor **expiry dates** to prevent selling expired stock
 
 ###  Smart Stock Handling
 
-. Automatic **stock deduction** when an order is placed
-. Real-time **current quantity tracking**
-. Batch-wise stock management for better accuracy
+. Automatic **stock deduction** when an order is placed.
+
+. Real-time **current quantity tracking**.
+
+. Batch-wise stock management for better accuracy.
 
 ###  Order & Billing System
 
-. Create customer orders with multiple medicines
-. Supports **multiple batches for the same medicine**
-. Stores **price at the time of sale** for accurate billing
+. Create customer orders with multiple medicines.
+
+. Supports **multiple batches for the same medicine**.
+
+. Stores **price at the time of sale** for accurate billing.
 
 ###  Supplier & Purchase Management
 
-. Manage suppliers and their details
-. Track purchase orders linked to batches
-. Maintain complete **purchase history**
+. Manage suppliers and their details.
+
+. Track purchase orders linked to batches.
+
+. Maintain complete **purchase history**.
 
 ###  Advanced Admin Panel
 
-. Powerful Django Admin interface
-. Integrated **TabularInline** for handling multiple items in a single order
-. Perform CRUD operations easily without writing SQL
+. Powerful Django Admin interface.
+
+. Integrated **TabularInline** for handling multiple items in a single order.
+
+. Perform CRUD operations easily without writing SQL.
 
 ---
 
@@ -70,10 +82,13 @@
 
 ##  Tech Stack
 
-. **Backend:** Django, Django REST Framework
-. **Database:** SQLite (can be upgraded to PostgreSQL)
-. **Language:** Python
-. **Admin UI:** Django Admin Panel
+. **Backend:** Django, Django REST Framework.
+
+. **Database:** SQLite (can be upgraded to PostgreSQL).
+
+. **Language:** Python.
+
+. **Admin UI:** Django Admin Panel.
 
 ---
 

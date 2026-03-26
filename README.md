@@ -158,10 +158,15 @@ http://127.0.0.1:8000/admin/
 ## Future Improvements
 
 . Working on making the Admin Dashboard even more user-friendly.
+
 . Plan to make low stock alert more effective
+
 . Plan to implement REST APIs using DRF for mobile and frontend integration.
+
 . JWT Authentication
+
 . Frontend integration (React)
+
 . Expiry notifications
 
 ##  Project Highlights

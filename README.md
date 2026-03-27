@@ -17,8 +17,7 @@
 ## ER Diagram
 
 ### ER Diagram
-
-![ER Diagram](https://github.com/user-attachments/assets/NEW-ID-HERE)
+![ER Diagram](https://github.com/user-attachments/assets/68c89bd8-0149-44c8-a54e-d4c627939ac1)
 
 👉 [View interactive ER Diagram here](https://dbdiagram.io/d/69c2eeeefb2db18e3bf62206)
 
@@ -155,28 +154,24 @@ http://127.0.0.1:8000/admin/
 ## 📷 Screenshots
 
 ### Admin Login
-![Login Page](https://github.com/user-attachments/assets/b093a3ff-2f2f-465c-bfa7-6f9f1fb457d2)
+![Admin Login](https://github.com/user-attachments/assets/f0fb515a-d2af-4374-8705-5b9c3b338fec)
 
 ### Pharmacy Dashboard
-![Pharmacy Dashboard](https://github.com/user-attachments/assets/07951ef6-c8f7-4346-b217-33a3321b8fe2)
+![Pharmacy Dashboard](https://github.com/user-attachments/assets/e80ea1f0-8449-44c9-885e-36992a897018)
 
 ### Inventory & Batch Management
-![Inventory Management](https://github.com/user-attachments/assets/7a129264-7016-4d4c-84e0-27b305885121)
-
-### Order Processing (Tabular Inline)
-![Order Processing](https://github.com/user-attachments/assets/3e31e504-7200-4b8a-ad34-a7c0ed927421)
-
-### Low Stock Alert
-![Low Stock Alert](https://github.com/user-attachments/assets/NEW-ID-HERE)
+![Inventory Management](https://github.com/user-attachments/assets/9f87e9e2-df11-44ef-98d9-0a05de6042d4)
 
 ### Add Medicine
-![Add Medicine](https://github.com/user-attachments/assets/NEW-ID-HERE)
+![Add Medicine](https://github.com/user-attachments/assets/49d3db65-1958-4024-8e20-bd145cf6fdc2)
+
+### Medicine List & Low Stock Alert
+![Medicine List](https://github.com/user-attachments/assets/e6500908-79d9-41d4-b33f-70a76f8dde52)
 
 ### Purchase Detail Entry
-![Purchase Detail](https://github.com/user-attachments/assets/NEW-ID-HERE)
+![Purchase Detail](https://github.com/user-attachments/assets/1bfcf224-844c-49a3-b6cf-8a0a63eaa6f7)
 
-### Medicine List & Stock Status
-![Medicine List](https://github.com/user-attachments/assets/NEW-ID-HERE)
+
 
 
 ## Future Improvements

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from inventory.models import Category
 from  inventory.models import Medicine
 from  inventory.models import Supplier
-from  inventory.models import Batch,PurchaseOrder,Order,OrderItem
+from  inventory.models import Batch,Order,OrderItem
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,12 +23,7 @@ class BatchSerializer(serializers.ModelSerializer):
     supplier=serializers.StringRelatedField()
     class Meta:
         model=Batch
-        fields = "__all__" 
-
-class PurchaseOrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=PurchaseOrder
-        fields = "__all__"                           
+        fields = "__all__"                     
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:

@@ -5,11 +5,11 @@ from inventory import serializer
 from inventory.serializer import CategorySerializer
 from inventory.serializer import MedicineSerializer
 from inventory.serializer import SupplierSerializer
-from inventory.serializer import BatchSerializer,PurchaseOrderSerializer,OrderSerializer,OrderItemSerializer
+from inventory.serializer import BatchSerializer,OrderSerializer,OrderItemSerializer
 from inventory.models import Category
 from  inventory.models import Medicine
 from  inventory.models import Supplier
-from  inventory.models import Batch,PurchaseOrder,Order,OrderItem
+from  inventory.models import Batch,Order,OrderItem
 
 
 # Create your views here.
@@ -28,10 +28,6 @@ class SupplierView(viewsets.ModelViewSet):
 class BatchView(viewsets.ModelViewSet):
     queryset=Batch.objects.all()
     serializer_class=BatchSerializer
-
-class PurchaseOrderView(viewsets.ModelViewSet):
-     queryset=PurchaseOrder.objects.all()
-     serializer_class=PurchaseOrderSerializer
 
 class OrderView(viewsets.ModelViewSet):
      queryset=Order.objects.all()

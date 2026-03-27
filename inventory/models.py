@@ -61,14 +61,28 @@ class Supplier(models.Model):
     def __str__(self):
         return self.sup_name
 
-class PurchaseOrder(models.Model):
-    purchase_date=models.DateField(auto_now_add=True)
-    supplier=models.ForeignKey(Supplier,on_delete=models.PROTECT)
-    total_amount=models.DecimalField(max_digits=10,decimal_places=2)
-    
+
+class PurchaseOrderItem(models.Model):
+    medicine_name = models.CharField(max_length=255)
+    quantity_ordered = models.PositiveIntegerField()
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    order_date = models.DateField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='Pending') # e.g., Pending, Received
 
     def __str__(self):
-        return f"{self.supplier.sup_name}-{self.purchase_date}"
+        return f"Order: {self.medicine_name} from {self.supplier.sup_name}"
+
+  #Purchase Detail with Legal Document (Invoice)
+class PurchaseDetail(models.Model):
+   
+    purchase_order_item = models.ForeignKey(PurchaseOrderItem, on_delete=models.CASCADE)
+    
+    invoice_no = models.CharField(max_length=100, unique=True) # The ID from the paper bill
+    received_date = models.DateField()
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Invoice {self.invoice_no}"
 
 
 class Batch(models.Model):
@@ -79,12 +93,13 @@ class Batch(models.Model):
     current_quantity = models.IntegerField()
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     mrp = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    medicine = models.ForeignKey("Medicine", on_delete=models.PROTECT) # Simplified string reference
-    purchaseOrder = models.ForeignKey(PurchaseOrder, on_delete=models.PROTECT)
+    medicine = models.ForeignKey("Medicine", on_delete=models.PROTECT) 
+    purchaseOrder = models.ForeignKey(PurchaseDetail, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['batch_no'] # Fixes the Autocomplete requirement
+        ordering = ['expiry_date','batch_no'] # Fixes the Autocomplete requirement
         verbose_name_plural="Batches"
+
 
     def __str__(self):
        
@@ -108,7 +123,7 @@ class Order(models.Model):
     
 class OrderItem(models.Model):
     order=models.ForeignKey(Order,on_delete=models.CASCADE)
-    batch=models.ForeignKey(Batch,on_delete=models.PROTECT)    
+    batch=models.ForeignKey(Batch,on_delete=models.CASCADE)    
     quantity=models.PositiveIntegerField()
     price_at_sale=models.DecimalField(max_digits=15,decimal_places=2)
 

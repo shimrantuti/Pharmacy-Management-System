@@ -6,7 +6,6 @@ router.register('category',views.CategoryView,basename='category')
 router.register('medicine',views.MedicineView,basename='medicine')
 router.register('supplier',views.SupplierView,basename='supplier')
 router.register('batch',views.BatchView,basename='batch')
-router.register('purchase_order',views.PurchaseOrderView,basename='purchase')
 router.register('order',views.OrderView,basename='order')
 router.register('OrderItem',views.OrderItemView,basename='OrderItem')
 urlpatterns=[

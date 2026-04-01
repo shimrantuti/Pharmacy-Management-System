@@ -14,12 +14,12 @@
 
 ---
 
-## ER Diagram
 
-### ER Diagram
+### Database Schema Design
+
 ![ER Diagram](https://github.com/user-attachments/assets/68c89bd8-0149-44c8-a54e-d4c627939ac1)
 
-👉 [View interactive ER Diagram here](https://dbdiagram.io/d/69c2eeeefb2db18e3bf62206)
+👉 [View interactiveDatabase Schema Design here](https://dbdiagram.io/d/69c2eeeefb2db18e3bf62206)
 
 
 

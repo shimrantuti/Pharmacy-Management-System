@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Sum
 
-# Create your models here.
+
 class Category(models.Model):
     name=models.CharField(max_length=100)
     description=models.TextField(blank=True)

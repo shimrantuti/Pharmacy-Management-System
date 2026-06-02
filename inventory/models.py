@@ -102,7 +102,7 @@ class Batch(models.Model):
 
         constraints = [
             models.CheckConstraint(
-                check = models.Q(current_quantity__gte = 0),
+                condition = models.Q(current_quantity__gte = 0),
                 name = "batch_current_quantity_not_negative"
             )
         ]
@@ -191,7 +191,6 @@ class SalesOrderItem(models.Model):
                 current_quantity=F("current_quantity") + qty
             )
 
-<<<<<<< HEAD
     def delete(self,*args,**kwargs):
         # Refund the quantity back to the batch when an item is deleted
         self.batch.current_quantity += self.quantity
@@ -202,7 +201,7 @@ class SalesOrderItem(models.Model):
         super().delete(*args,**kwargs)
         #Refresh the bill
         order_to_update.update_total_bill()
-=======
+
     @staticmethod
     def decrease_stock(batch_id, qty):
 
@@ -420,7 +419,9 @@ class SalesOrderItem(models.Model):
                 super().delete(*args, **kwargs)
 
                 # Update bill
-                order.update_total_bill()
+                order.update_total_bill(
+
+                )
 
         except Exception:
 
@@ -430,4 +431,4 @@ class SalesOrderItem(models.Model):
             )
 
             raise
->>>>>>> 392bc24 (Refactor(models): optimize stock deduction architecture in SalesOrderItem)
+

@@ -1,18 +1,20 @@
-from django.db import models
+from django.db import models 
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum , F
+from django.db import transaction
+import logging
 
 
 class Category(models.Model):
-    name=models.CharField(max_length=100)
+    category_name=models.CharField(max_length=100)
     description=models.TextField(blank=True)
 
     class Meta:
         verbose_name_plural = "Categories"
 
     def __str__(self):
-        return self.name
+        return self.category_name
     
 
 class Medicine(models.Model):
@@ -49,7 +51,7 @@ class Medicine(models.Model):
 class Supplier(models.Model):
     sup_name=models.CharField(max_length=100,unique=True)
     contact_person=models.CharField(max_length=100)
-    phone_number=models.CharField(max_length=15)
+    phone_no=models.CharField(max_length=15)
     email=models.EmailField(blank=True)
     address=models.TextField()
     gst_number=models.CharField(max_length=15,blank=True)
@@ -62,7 +64,7 @@ class Supplier(models.Model):
         return self.sup_name
 
 
-class PurchaseOrderItem(models.Model):
+class PurchaseOrder(models.Model):
     medicine_name = models.CharField(max_length=255)
     quantity_ordered = models.PositiveIntegerField()
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
@@ -73,9 +75,9 @@ class PurchaseOrderItem(models.Model):
         return f"Order: {self.medicine_name} from {self.supplier.sup_name}"
 
   #Purchase Detail with Legal Document (Invoice)
-class PurchaseDetail(models.Model):
+class PurchaseInvoice(models.Model):
    
-    purchase_order_item = models.ForeignKey(PurchaseOrderItem, on_delete=models.CASCADE)
+    purchase_order_item = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
     
     invoice_no = models.CharField(max_length=100, unique=True) # The ID from the paper bill
     received_date = models.DateField()
@@ -89,14 +91,21 @@ class Batch(models.Model):
     batch_no = models.CharField(max_length=50, unique=True)
     manufacture_date = models.DateField()  
     expiry_date = models.DateField()  
-    initial_quantity = models.IntegerField()
-    current_quantity = models.IntegerField()
+    initial_quantity = models.PositiveIntegerField()
+    current_quantity = models.PositiveIntegerField()
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     mrp = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     medicine = models.ForeignKey("Medicine", on_delete=models.PROTECT) 
-    purchaseOrder = models.ForeignKey(PurchaseDetail, on_delete=models.CASCADE)
+    purchaseOrder = models.ForeignKey("PurchaseInvoice", on_delete=models.CASCADE)
 
     class Meta:
+
+        constraints = [
+            models.CheckConstraint(
+                check = models.Q(current_quantity__gte = 0),
+                name = "batch_current_quantity_not_negative"
+            )
+        ]
         ordering = ['expiry_date','batch_no'] # Fixes the Autocomplete requirement
         verbose_name_plural="Batches"
 
@@ -121,50 +130,68 @@ class Order(models.Model):
     def __str__(self):
         return self.customer_name
     
-class OrderItem(models.Model):
-    order=models.ForeignKey(Order,on_delete=models.CASCADE)
-    batch=models.ForeignKey(Batch,on_delete=models.CASCADE)    
-    quantity=models.PositiveIntegerField()
-    price_at_sale=models.DecimalField(max_digits=15,decimal_places=2)
 
+
+logger = logging.getLogger(__name__)
+
+
+class SalesOrderItem(models.Model):
+
+    order = models.ForeignKey(
+        'Order',
+        on_delete=models.CASCADE,
+        related_name='items'
+    )
+
+    batch = models.ForeignKey(
+        'Batch',
+        on_delete=models.PROTECT
+    )
+
+    quantity = models.PositiveIntegerField()
+
+    price_at_sale = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    # =========================================
+    # VALIDATION
+    # =========================================
     def clean(self):
-        if self.pk:
-            original_qty= OrderItem.objects.get(pk=self.pk).quantity
-        else:
-            original_qty=0  
 
-         #calculate change in quantity
-        self._delta = self.quantity - original_qty 
+        errors = {}
 
-        #Prevents sale if requested quantity exceeds  current stock 
-        if self._delta > 0 and self._delta > self.batch.current_quantity :
-              raise ValidationError(f"Insufficient stock in Batch {self.batch.batch_no}!")
-           
+        if not self.order_id:
+            errors["order"] = "Order is required."
 
-    def save(self,*args,**kwargs):
+        if not self.batch_id:
+            errors["batch"] = "Batch is required."
 
-        self.full_clean()
+        if self.quantity is None or self.quantity <= 0:
+            errors["quantity"] = (
+                "Quantity must be greater than 0."
+            )
 
-        if self.pk:
-            original_qty= OrderItem.objects.get(pk=self.pk).quantity
-        else:
-            original_qty=0  
-            
-        #use delta calulate in clean()
-        delta=getattr(self,"_delta",None)
-    
-        #update the stoch in the batch table
-        self.batch.current_quantity -= delta
+        if errors:
+            raise ValidationError(errors)
 
-        
-        if not self.price_at_sale and self.batch.mrp:
-            self.price_at_sale=self.batch.mrp
-        self.batch.save()
-        super().save(*args,**kwargs)
+    # =========================================
+    # STOCK HELPERS
+    # =========================================
+    @staticmethod
+    def increase_stock(batch_id, qty):
 
-        #recalculate  the  master order total
-        self.order.update_total_bill()    
+        if qty > 0:
+            Batch.objects.filter(
+                pk=batch_id
+            ).update(
+                current_quantity=F("current_quantity") + qty
+            )
 
+<<<<<<< HEAD
     def delete(self,*args,**kwargs):
         # Refund the quantity back to the batch when an item is deleted
         self.batch.current_quantity += self.quantity
@@ -175,3 +202,232 @@ class OrderItem(models.Model):
         super().delete(*args,**kwargs)
         #Refresh the bill
         order_to_update.update_total_bill()
+=======
+    @staticmethod
+    def decrease_stock(batch_id, qty):
+
+        if qty > 0:
+            Batch.objects.filter(
+                pk=batch_id
+            ).update(
+                current_quantity=F("current_quantity") - qty
+            )
+
+    # =========================================
+    # SAVE
+    # =========================================
+    def save(self, *args, **kwargs):
+
+        try:
+
+            self.full_clean()
+
+            with transaction.atomic():
+
+                is_update = self.pk is not None
+
+                old_batch_id = None
+                old_quantity = 0
+
+                # =============================
+                # UPDATE CASE
+                # =============================
+                if is_update:
+
+                    old_item = (
+                        SalesOrderItem.objects
+                        .select_for_update()
+                        .get(pk=self.pk)
+                    )
+
+                    old_batch_id = old_item.batch_id
+                    old_quantity = old_item.quantity
+
+                    # Deadlock-safe lock ordering
+                    batch_ids = sorted(
+                        {
+                            old_batch_id,
+                            self.batch_id
+                        }
+                    )
+
+                    locked_batches = (
+                        Batch.objects
+                        .select_for_update()
+                        .filter(pk__in=batch_ids)
+                    )
+
+                    batch_map = {
+                        batch.pk: batch
+                        for batch in locked_batches
+                    }
+
+                    current_batch = (
+                        batch_map[self.batch_id]
+                    )
+
+                    # Same batch update
+
+                    if old_batch_id == self.batch_id:
+
+                        available_stock = (
+                            current_batch.current_quantity
+                            + old_quantity
+                        )
+
+                        if self.quantity > available_stock:
+                            raise ValidationError({
+                                "quantity":
+                                f"Only {available_stock} items available."
+                            })
+
+                    # Batch changed
+
+                    else:
+
+                        if (
+                            self.quantity >
+                            current_batch.current_quantity
+                        ):
+                            raise ValidationError({
+                                "quantity":
+                                f"Only {current_batch.current_quantity} items available in new batch."
+                            })
+
+                # =============================
+                # CREATE CASE
+                # =============================
+                else:
+
+                    current_batch = (
+                        Batch.objects
+                        .select_for_update()
+                        .get(pk=self.batch_id)
+                    )
+
+                    if (
+                        self.quantity >
+                        current_batch.current_quantity
+                    ):
+                        raise ValidationError({
+                            "quantity":
+                            f"Only {current_batch.current_quantity} items available."
+                        })
+
+                # =============================
+                # HISTORICAL PRICING
+                # =============================
+                if self.price_at_sale is None:
+                    self.price_at_sale = (
+                        current_batch.mrp
+                    )
+
+                # =============================
+                # SAVE MAIN OBJECT FIRST
+                # =============================
+                super().save(*args, **kwargs)
+
+                # =============================
+                # STOCK UPDATE
+                # =============================
+
+                if is_update:
+
+                    # SAME BATCH
+                    if old_batch_id == self.batch_id:
+
+                        delta = (
+                            self.quantity -
+                            old_quantity
+                        )
+
+                        if delta > 0:
+
+                            self.decrease_stock(
+                                current_batch.pk,
+                                delta
+                            )
+
+                        elif delta < 0:
+
+                            self.increase_stock(
+                                current_batch.pk,
+                                abs(delta)
+                            )
+
+                    # BATCH CHANGED
+                    else:
+
+                        self.increase_stock(
+                            old_batch_id,
+                            old_quantity
+                        )
+
+                        self.decrease_stock(
+                            current_batch.pk,
+                            self.quantity
+                        )
+
+                # CREATE
+                else:
+
+                    self.decrease_stock(
+                        current_batch.pk,
+                        self.quantity
+                    )
+
+                # =============================
+                # UPDATE ORDER TOTAL
+                # =============================
+                self.order.update_total_bill()
+
+        except ValidationError:
+            raise
+
+        except Exception:
+
+            logger.exception(
+                f"Error saving SalesOrderItem "
+                f"(PK={self.pk})"
+            )
+
+            raise
+
+    # =========================================
+    # DELETE
+    # =========================================
+    def delete(self, *args, **kwargs):
+
+        try:
+
+            with transaction.atomic():
+
+                batch = (
+                    Batch.objects
+                    .select_for_update()
+                    .get(pk=self.batch_id)
+                )
+
+                order = self.order
+
+                # Restore stock
+                self.increase_stock(
+                    batch.pk,
+                    self.quantity
+                )
+
+                # Delete row
+                super().delete(*args, **kwargs)
+
+                # Update bill
+                order.update_total_bill()
+
+        except Exception:
+
+            logger.exception(
+                f"Error deleting SalesOrderItem "
+                f"(PK={self.pk})"
+            )
+
+            raise
+>>>>>>> 392bc24 (Refactor(models): optimize stock deduction architecture in SalesOrderItem)

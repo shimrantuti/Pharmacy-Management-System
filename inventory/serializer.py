@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from inventory.models import Category
 from  inventory.models import Medicine
-from  inventory.models import Supplier
-from  inventory.models import Batch,Order,OrderItem
+from  inventory.models import Supplier,PurchaseOrder
+from  inventory.models import Batch,Order,SalesOrderItem,PurchaseInvoice
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +18,22 @@ class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model=Supplier
         fields = "__all__" 
+
+class PurchaseOrderSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model =PurchaseOrder    
+        fields= "__all__"                                                                 
+
+
+
+class PurchaseInvoiceSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model =PurchaseInvoice    
+        fields= "__all__"                                                                         
+
+
 class BatchSerializer(serializers.ModelSerializer):
     medicine=serializers.StringRelatedField()
     supplier=serializers.StringRelatedField()
@@ -32,5 +48,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model=OrderItem
-        fields = "__all__"                                                                   
+        model=SalesOrderItem
+        fields = "__all__"    
+

@@ -10,7 +10,7 @@ from inventory.models import Category
 from  inventory.models import Medicine
 from  inventory.models import Supplier,PurchaseOrder,PurchaseInvoice
 from  inventory.models import Batch,Order,SalesOrderItem,PurchaseInvoice
-
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 class CategoryView(viewsets.ModelViewSet):
@@ -20,6 +20,7 @@ class CategoryView(viewsets.ModelViewSet):
 class MedicineView(viewsets.ModelViewSet):
     queryset=Medicine.objects.all()
     serializer_class=MedicineSerializer
+    permission_classes = [IsAuthenticated]
 
 class SupplierView(viewsets.ModelViewSet):
     queryset=Supplier.objects.all()

@@ -44,7 +44,14 @@ class BatchSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Order
-        fields = "__all__"   
+        fields = "__all__"  
+    def validate(self, attrs):
+        if self.instance:
+            if "customer_name" in attrs or "phone_no" in attrs:
+                raise serializers.ValidationError(
+                    "Customer name and phone number cannot be changed after order creation."
+                )
+        return attrs 
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:

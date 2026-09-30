@@ -28,12 +28,12 @@ class SupplierView(viewsets.ModelViewSet):
 
 class PurchaseOrderView(viewsets.ModelViewSet) :
       queryset=PurchaseOrder.objects.all()
-      serializer_class=PurchaseOrder
+      serializer_class=PurchaseOrderSerializer
 
 
 class PurchaseInvoiceView(viewsets.ModelViewSet) :
       queryset=PurchaseInvoice.objects.all()
-      serializer_class=PurchaseInvoice
+      serializer_class=PurchaseInvoiceSerializer
 
 
 
@@ -49,6 +49,3 @@ class SalesOrderItemView(viewsets.ModelViewSet):
      queryset=SalesOrderItem.objects.all()
      serializer_class=OrderItemSerializer                         
 
-class PurchaseInvoiceView(viewsets.ModelViewSet) :
-      queryset=PurchaseInvoice.objects.all()
-      serializer_class=PurchaseInvoice

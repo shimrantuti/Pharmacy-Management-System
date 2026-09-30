@@ -20,13 +20,9 @@ class MedicineAdmin(admin.ModelAdmin):
     list_display=('medicine_name','generic_name','description','low_stock_threshold','category','stock_status','total_available_stock')
     search_fields = ('medicine_name', 'generic_name')
     list_filter = ('category',)
-    # inlines=[BatchInline]
+    inlines=[BatchInline]
     
-    #Search field at the top
-    search_fields = ('medicine_name', 'generic_name')
-
-    #  Filter sidebar on the right
-    list_filter = ('category',)
+    
 
 
 class CategoryAdmin(admin.ModelAdmin):

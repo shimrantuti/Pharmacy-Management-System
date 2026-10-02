@@ -10,7 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"   
 
 class MedicineSerializer(serializers.ModelSerializer):
-    category=serializers.StringRelatedField()
+    # category=serializers.StringRelatedField()
     class Meta:
         model=Medicine
         fields = "__all__"  
@@ -35,8 +35,8 @@ class PurchaseInvoiceSerializer(serializers.ModelSerializer):
 
 
 class BatchSerializer(serializers.ModelSerializer):
-    medicine=serializers.StringRelatedField()
-    supplier=serializers.StringRelatedField()
+    # medicine=serializers.StringRelatedField()
+    # supplier=serializers.StringRelatedField()
     class Meta:
         model=Batch
         fields = "__all__"                     
@@ -51,6 +51,25 @@ class OrderSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Customer name and phone number cannot be changed after order creation."
                 )
+
+            if "status" in attrs:
+                new_status = attrs["status"]
+
+                if self.instance.status == "COMPLETED":
+                    raise serializers.ValidationError(
+                        "Completed order cannot be changed."
+                    )
+
+                if self.instance.status == "CANCELLED":
+                    raise serializers.ValidationError(
+                        "Cancelled order cannot be changed."
+                    )
+
+                if new_status not in ["COMPLETED", "CANCELLED"]:
+                    raise serializers.ValidationError(
+                        "Invalid order status."
+                    )
+
         return attrs 
 
 class OrderItemSerializer(serializers.ModelSerializer):

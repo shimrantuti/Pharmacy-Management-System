@@ -120,10 +120,23 @@ class Order(models.Model):
     phone_no=models.CharField(max_length=15,blank=True)
     timestamp=models.DateTimeField(auto_now_add=True)
     total_amount=models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
+
+
+    STATUS_CHOICES = [
+    ("DRAFT", "Draft"),
+    ("COMPLETED", "Completed"),
+    ("CANCELLED", "Cancelled"),
+    ]
+
+    status = models.CharField(
+    max_length=20,
+    choices=STATUS_CHOICES,
+    default="DRAFT"
+    )
      
 
     def update_total_bill(self):
-        items=self.orderitem_set.all()
+        items=self.items.all()
         bill = sum(item.quantity * item.price_at_sale for item in items)
         self.total_amount=bill
         self.save()

@@ -11,36 +11,42 @@ from  inventory.models import Medicine
 from  inventory.models import Supplier,PurchaseOrder,PurchaseInvoice
 from  inventory.models import Batch,Order,SalesOrderItem,PurchaseInvoice
 from rest_framework.permissions import IsAuthenticated
+from inventory.permissions import IsAdmin
+from inventory.permissions import IsAdminOrSellerReadOnly
 
 # Create your views here.
 class CategoryView(viewsets.ModelViewSet):
     queryset=Category.objects.all()
     serializer_class=CategorySerializer
+    permission_classes = [IsAdminOrSellerReadOnly]
      
 class MedicineView(viewsets.ModelViewSet):
     queryset=Medicine.objects.all()
     serializer_class=MedicineSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrSellerReadOnly]
 
 class SupplierView(viewsets.ModelViewSet):
     queryset=Supplier.objects.all()
     serializer_class=SupplierSerializer
+    permission_classes = [IsAdmin]
 
 
 class PurchaseOrderView(viewsets.ModelViewSet) :
       queryset=PurchaseOrder.objects.all()
       serializer_class=PurchaseOrderSerializer
+      permission_classes = [IsAdmin]
 
 
 class PurchaseInvoiceView(viewsets.ModelViewSet) :
       queryset=PurchaseInvoice.objects.all()
       serializer_class=PurchaseInvoiceSerializer
-
+      permission_classes = [IsAdmin]
 
 
 class BatchView(viewsets.ModelViewSet):
     queryset=Batch.objects.all()
     serializer_class=BatchSerializer
+    permission_classes = [IsAdminOrSellerReadOnly]
 
 class OrderView(viewsets.ModelViewSet):
      queryset=Order.objects.all()

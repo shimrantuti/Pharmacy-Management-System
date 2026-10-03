@@ -18,6 +18,10 @@ from inventory.permissions import (
     IsAdminOrSellerOrderItem
 )
 
+from django.db import transaction
+from rest_framework.response import Response
+from rest_framework import status
+
 # Create your views here.
 class CategoryView(viewsets.ModelViewSet):
     queryset=Category.objects.all()
@@ -52,13 +56,58 @@ class BatchView(viewsets.ModelViewSet):
     serializer_class=BatchSerializer
     permission_classes = [IsAdminOrSellerReadOnly]
 
+from django.db import transaction
+from rest_framework.response import Response
+from rest_framework import status
+
+
 class OrderView(viewsets.ModelViewSet):
-     queryset=Order.objects.all()
-     serializer_class=OrderSerializer  
-     permission_classes = [IsAdminOrSellerOrder]
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAdminOrSellerOrder]
+
+    def partial_update(self, request, *args, **kwargs):
+        order = self.get_object()
+
+        new_status = request.data.get("status")
+
+        if new_status == "CANCELLED":
+
+            if order.status != "DRAFT":
+                return Response(
+                    {"error": "Only DRAFT orders can be cancelled."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            with transaction.atomic():
+
+                for item in order.items.select_for_update():
+
+                    item.batch.current_quantity += item.quantity
+                    item.batch.save()
+
+                order.status = "CANCELLED"
+                order.save()
+
+            return Response(
+                OrderSerializer(order).data,
+                status=status.HTTP_200_OK
+            )
+
+        return super().partial_update(request, *args, **kwargs)
 
 class SalesOrderItemView(viewsets.ModelViewSet):
-     queryset=SalesOrderItem.objects.all()
-     serializer_class=OrderItemSerializer    
-     permission_classes = [IsAdminOrSellerOrderItem]                     
+    queryset = SalesOrderItem.objects.all()
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAdminOrSellerOrderItem]
 
+    def partial_update(self, request, *args, **kwargs):
+        item = self.get_object()
+
+        if item.order.status != "DRAFT":
+            return Response(
+                {"error": "Cannot update items of a completed or cancelled order."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return super().partial_update(request, *args, **kwargs)

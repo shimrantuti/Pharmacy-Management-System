@@ -65,7 +65,7 @@ class IsAdminOrSellerOrderItem(BasePermission):
             return True
 
         # Get the Order connected to this SalesOrderItem
-        if obj.order.status == "COMPLETED":
+        if obj.order.status in ["COMPLETED", "CANCELLED"]:
             return False
 
         return True

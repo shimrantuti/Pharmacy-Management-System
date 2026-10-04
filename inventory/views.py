@@ -21,6 +21,12 @@ from inventory.permissions import (
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.filters import SearchFilter
+from django.utils import timezone
+
+from django.db import transaction
+from rest_framework.response import Response
+from rest_framework import status
 
 # Create your views here.
 class CategoryView(viewsets.ModelViewSet):
@@ -32,6 +38,9 @@ class MedicineView(viewsets.ModelViewSet):
     queryset=Medicine.objects.all()
     serializer_class=MedicineSerializer
     permission_classes = [IsAdminOrSellerReadOnly]
+
+    filter_backends = [SearchFilter]
+    search_fields = ["medicine_name"]
 
 class SupplierView(viewsets.ModelViewSet):
     queryset=Supplier.objects.all()
@@ -56,10 +65,22 @@ class BatchView(viewsets.ModelViewSet):
     serializer_class=BatchSerializer
     permission_classes = [IsAdminOrSellerReadOnly]
 
-from django.db import transaction
-from rest_framework.response import Response
-from rest_framework import status
+    def get_queryset(self):
+        queryset = super().get_queryset()
 
+        medicine_id = self.request.query_params.get("medicine")
+
+        if medicine_id:
+            queryset = queryset.filter(
+                medicine_id=medicine_id,
+                current_quantity__gt=0,
+                expiry_date__gt=timezone.now().date(),
+                
+            ).order_by("expiry_date")
+
+        return queryset
+    
+    
 
 class OrderView(viewsets.ModelViewSet):
     queryset = Order.objects.all()

@@ -6,13 +6,70 @@
 ![License](https://img.shields.io/badge/license-MIT-yellow)
 ![GitHub stars](https://img.shields.io/github/stars/shimrantuti/Pharmacy-Management-System?style=social)
 
-. A real-world pharmacy workflow simulation built with Django & DRF.
+A backend-focused Pharmacy Management System built with Django and Django REST Framework (DRF) to simulate real-world pharmacy inventory, batch management, sales, purchasing, and order workflows.
 
-. This project simulates a real‑world pharmacy workflow, built to strengthen my backend and database design skills.
-  
-. It handles everything from adding medicines to tracking batches, handling low stock status and processing customer         orders.
+The system is designed around accurate stock tracking, batch-level inventory control, expiry management, role-based access, and transaction-safe operations.
 
----
+🚧 Current Status: Backend development is largely complete. React frontend integration is the next development phase.
+
+
+
+📌 Overview
+
+Managing medicines is more complex than simply storing a medicine name and quantity.
+
+A real pharmacy may have:
+
+Multiple batches of the same medicine
+
+Different expiry dates
+
+Different quantities across batches
+
+Changing stock after every sale
+
+Customer orders with different statuses
+
+Expired inventory that should not be sold
+
+Different permissions for administrators and sellers
+
+This project models these workflows through a RESTful Django backend with business rules enforced at the application level.
+
+
+🗃️ Database Design
+
+The system uses a relational database design centered around medicines, batches, suppliers, purchases, and orders.
+
+Main entities
+
+Category
+   │
+   └── Medicine
+          │
+          └── Batch
+                 │
+                 └── SalesOrderItem
+                          │
+                          └── Order
+
+Supplier
+   │
+   └── PurchaseOrder
+          │
+          └── PurchaseInvoice
+
+The database design focuses on:
+
+Relationships between entities
+
+Batch-level inventory tracking
+
+Historical transaction data
+
+Normalized data storage
+
+Referential integrity
 
 
 ### Database Schema Design
@@ -25,129 +82,378 @@
 
 ##  Key Features
 
-###  Inventory Management
+✨ Key Features
 
-. Manage medicines with categories and detailed descriptions
+🔐 Authentication & Authorization
 
-. Track **multiple batches per medicine**
+JWT-based authentication using Django REST Framework Simple JWT
 
-. Monitor **expiry dates** to prevent selling expired stock
+Protected API endpoints
 
-###  Smart Stock Handling
+Role-based access using Django Groups
 
-. Automatic **stock deduction** when an order is placed.
+Separate permissions for ADMIN and SELLER
 
-. Real-time **current quantity tracking**.
+Sellers can access permitted inventory data without receiving administrative operations
 
-. Batch-wise stock management for better accuracy.
+Admin-only expired-batch disposal
 
-###  Order & Billing System
+💊 Medicine Management
 
-. Create customer orders with multiple medicines.
+Create and manage medicines
 
-. Supports **multiple batches for the same medicine**.
+Organize medicines using categories
 
-. Stores **price at the time of sale** for accurate billing.
+Store generic name and description
 
-###  Supplier & Purchase Management
+Configure medicine-specific low-stock thresholds
 
-. Manage suppliers and their details.
+Track total usable stock across batches
 
-. Track purchase orders linked to batches.
+📦 Batch-Level Inventory
 
-. Maintain complete **purchase history**.
+Multiple batches can belong to the same medicine
 
-###  Advanced Admin Panel
+Track:
 
-. Powerful Django Admin interface.
+Batch number
 
-. Integrated **TabularInline** for handling multiple items in a single order.
+Manufacturing date
 
-. Perform CRUD operations easily without writing SQL.
+Expiry date
 
----
+Purchase price
 
-### Low Stock Alert
+MRP
 
-. Instant Visibility: Use of emojis (✅, ⚠️, ❌) allows for a quick "at-a-glance" check of inventory levels.
+Current quantity
 
-. Proactive Ordering: The Low Stock Alert (⚠️) ensures you restock before a medicine completely runs out.
+Inventory status
 
-. Automated Safety: It automatically hides expired batches, ensuring only safe-to-sell stock is shown.
+Maintain batch-level stock accuracy
 
-. Zero Manual Work: The status updates itself in real-time, removing the risk of human calculation errors.
+Prevent expired batches from being used for sales
 
-. Better Customer Service: Staff can instantly see what is Out of Stock (❌), preventing them from promising unavailable    items.
+📊 Smart Stock Management
+
+The system dynamically identifies:
+
+🟢 Available stock
+
+⚠️ Low-stock medicines
+
+❌ Out-of-stock medicines
+
+⏳ Batches expiring soon
+
+🔴 Expired batches
+
+Expired stock is not counted as usable inventory.
+
+🧾 Sales & Order Management
+
+Orders follow a controlled lifecycle:
+
+DRAFT
+  │
+  ├── COMPLETED
+  │
+  └── CANCELLED
+
+The system supports:
+
+Customer name and phone number
+
+Multiple medicines in an order
+
+Multiple batches for the same medicine
+
+Automatic stock deduction
+
+Automatic bill calculation
+
+Sale-time price storage
+
+Order cancellation with stock restoration
+
+Protection against modifying completed/cancelled orders
+
+Protection against changing customer information after order creation
+
+🔄 Multi-Batch Stock Allocation
+
+When a requested quantity cannot be fulfilled from one batch, the system can allocate stock across multiple valid batches.
+
+Example:
+
+Requested: 18 units
+
+Batch A → 10 units
+Batch B → 8 units
+------------------
+Total    → 18 units
+
+Only non-expired batches with available stock are considered.
+
+Batch selection is performed according to expiry order to help prioritize batches with earlier expiry dates.
+
+🗑️ Expired Inventory Disposal
+
+Expired stock can remain in the database for historical purposes while being removed from active inventory.
+
+Inventory follows:
+
+ACTIVE → DISPOSED
+
+Expired batches with remaining stock appear in the expired-batch dashboard
+
+Only ADMIN users can dispose of expired inventory
+
+Disposal does not delete the database record
+
+Historical inventory information is preserved
+
+🏭 Supplier & Purchase Management
+
+Manage suppliers
+
+Create purchase orders
+
+Track purchase invoices
+
+Associate purchased stock with batches
+
+Maintain purchase history
+
+📄 API Pagination
+
+Large API responses use DRF pagination.
+
+Current default:
+
+Page size: 10
+
+This keeps inventory and dashboard responses manageable as the dataset grows.
+
+🧠 Important Business Rules
+
+The backend enforces several rules instead of relying only on the frontend.
+
+Stock cannot become negative
+
+Before selling or modifying an item, the system verifies available batch quantity.
+
+Expired medicines cannot be sold
+
+Only batches whose expiry date is later than the current date are considered usable.
+
+Expired stock does not count as available stock
+
+A medicine is considered out of stock when it has no usable quantity in any non-expired batch.
+
+Completed orders are protected
+
+Once an order is completed, its items cannot be modified.
+
+Cancelled orders are protected
+
+Cancelled orders cannot be modified again.
+
+Customer information is immutable
+
+Customer name and phone number cannot be changed after order creation.
+
+Sale price is preserved
+
+price_at_sale stores the medicine price used during the transaction so that historical billing remains accurate even if the batch MRP changes later.
+
+⚙️ Transaction-Safe Inventory Operations
+
+Inventory changes are handled carefully to prevent inconsistent stock.
+
+The project uses:
+
+transaction.atomic()
+
+select_for_update()
+
+Django F() expressions
+
+These are used for operations such as:
+
+Selling stock
+
+Updating order items
+
+Changing batches
+
+Restoring stock after cancellation
+
+Deleting order items
+
+Multi-batch stock allocation
+
+This helps ensure that related database changes succeed or fail together and reduces the risk of incorrect stock updates during concurrent operations.
+
+📊 Dashboard APIs
+
+The backend provides dedicated endpoints for important inventory conditions.
+
+Endpoint
+
+Purpose
+
+/inventory/batch/out_of_stock/
+
+Medicines with no usable stock
+
+/inventory/batch/expiring_soon/
+
+Batches expiring within 30 days
+
+/inventory/batch/expired/
+
+Expired batches with remaining active stock
+
+/inventory/batch/{id}/dispose/
+
+Admin-only expired-batch disposal
+
+These results are calculated dynamically from the current inventory state.
 
 
+🛠️ Tech Stack
 
-##  Tech Stack
+Category
 
-. **Backend:** Django, Django REST Framework.
+Technology
 
-. **Database:** SQLite (can be upgraded to PostgreSQL).
+Language
 
-. **Language:** Python.
+Python
 
-. **Admin UI:** Django Admin Panel.
+Backend
 
----
+Django 6.0.3
 
-## ⚙️ Installation & Setup
+API
 
-### 1 Clone the repository
+Django REST Framework 3.16.1
 
-```bash
+Authentication
+
+Simple JWT
+
+Database
+
+SQLite
+
+Admin Interface
+
+Django Admin
+
+API Testing
+
+Postman
+
+Version Control
+
+Git & GitHub
+
+Development
+
+VS Code
+
+📁 Project Structure
+
+Pharmacy-Management-System/
+│
+├── core/
+│   ├── settings.py
+│   ├── urls.py
+│   └── ...
+│
+├── inventory/
+│   ├── models.py
+│   ├── serializers.py
+│   ├── views.py
+│   ├── permissions.py
+│   ├── urls.py
+│   └── migrations/
+│
+├── manage.py
+├── requirements.txt
+├── README.md
+└── db.sqlite3
+
+🚀 Installation & Setup
+
+1. Clone the repository
+
 git clone https://github.com/shimrantuti/Pharmacy-Management-System.git
 cd Pharmacy-Management-System
-```
 
-### 2️ Create virtual environment
+2. Create a virtual environment
 
-```bash
 python -m venv venv
-```
 
-### 3️ Activate virtual environment
+3. Activate the virtual environment
 
-```bash
-# For Windows
+Windows
+
 venv\Scripts\activate
-```
 
-### 4️ Install dependencies
+Linux / macOS
 
-```bash
+source venv/bin/activate
+
+4. Install dependencies
+
 pip install -r requirements.txt
-```
 
-### 5️ Run migrations
+5. Apply migrations
 
-```bash
-python manage.py makemigrations
 python manage.py migrate
-```
 
-### 6️ Run server
+6. Create an administrator
 
-```bash
+python manage.py createsuperuser
+
+7. Start the development server
+
 python manage.py runserver
 
----
+The application will be available at:
 
-##  Admin Access
+http://127.0.0.1:8000/
 
-Create a superuser:
+🔑 Admin Panel
 
-```bash
-python manage.py createsuperuser
-```
+Open:
 
-Then open:
-
-```
 http://127.0.0.1:8000/admin/
-```
+
+Use the superuser credentials created during setup.
+
+Django Admin can be used to manage core pharmacy data and inspect database records during development.
+
+🧪 API Testing
+
+The REST API can be tested using tools such as Postman.
+
+Authentication flow:
+
+Login
+  ↓
+Receive JWT access token
+  ↓
+Send token with protected requests
+  ↓
+Access permitted API resources
+
+Example authorization header:
+
+Authorization: Bearer <access_token>
 
 
 
@@ -173,49 +479,228 @@ http://127.0.0.1:8000/admin/
 
 
 
+🔍 Technical Challenges & Solutions
 
-## Future Improvements
+1. Preventing Incorrect Stock Updates
 
-. Working on making the Admin Dashboard even more user-friendly.
+Problem
 
-. Plan to make low stock alert more effective
+Simple stock updates can produce incorrect quantities when multiple database operations affect the same batch.
 
-. Plan to implement REST APIs using DRF for mobile and frontend integration.
+Solution
 
-. JWT Authentication
+The project uses:
 
-. Frontend integration (React)
+transaction.atomic()
+select_for_update()
+F()
 
-. Expiry notifications
+to make stock-changing operations safer and transaction-aware.
 
-##  Project Highlights
+2. Selling One Medicine From Multiple Batches
 
-. Real-world **pharmacy workflow simulation**
+Problem
 
-. Clean and normalized database design
+A requested quantity may exceed the stock available in the selected batch.
 
-. Scalable backend using Django REST Framework
+Solution
 
+The backend checks subsequent valid batches and allocates the requested quantity across them while maintaining individual batch records.
 
----
+3. Restoring Stock After Order Cancellation
 
-🛠️TECH STACK AND SKILL
+Problem
 
-. Backend: Python , Django , Django REST Framework (DRF).
+Cancelling an order must return its sold quantities to the correct batches.
 
-. Database: SQLite, ER Modeling, Database Normalization (1NF, 2NF, 3NF).
+Solution
 
-. Frontend (Basics): HTML, CSS(Customizing Django Admin UI),Javascript(Basic).
+The system restores each order item's quantity to its associated batch inside a database transaction.
 
-. DevOps & Tools: Git, GitHub, VS Code, Postman (API Testing).
+4. Preventing Expired Stock From Being Sold
 
-. Learning Goal (Current): Integrating JavaScript/React for a dynamic frontend      
+Problem
+
+A medicine can still have quantity remaining after its expiry date.
+
+Solution
+
+Sales operations check batch expiry before allocation and only consider valid, non-expired stock.
+
+5. Preserving Historical Sale Prices
+
+Problem
+
+The current MRP of a batch may change after a sale.
+
+Solution
+
+The system stores:
+
+price_at_sale
+
+on every SalesOrderItem.
+
+This keeps historical billing independent of future price changes.
+
+6. Preserving Expired Inventory History
+
+Problem
+
+Deleting expired batches would remove useful historical information.
+
+Solution
+
+Instead of deleting the record, the system changes:
+
+ACTIVE → DISPOSED
+
+This keeps the database history while removing the batch from active inventory.
+
+7. Role-Based Inventory Operations
+
+Problem
+
+Every authenticated user should not be able to perform administrative inventory actions.
+
+Solution
+
+Custom DRF permission classes restrict operations based on authentication and Django Groups.
+
+For example:
+
+SELLER
+  ├── View permitted inventory
+  ├── View expired batches
+  └── Cannot dispose expired stock
+
+ADMIN
+  ├── Inventory management
+  └── Dispose expired stock
+
+📌 Current Development Status
+
+Completed
+
+Django backend
+
+Django REST Framework APIs
+
+JWT authentication
+
+Role-based permissions
+
+Medicine management
+
+Category management
+
+Supplier management
+
+Purchase management
+
+Batch-level inventory
+
+Multi-batch sales allocation
+
+Automatic stock deduction
+
+Stock restoration on cancellation
+
+Order lifecycle management
+
+Expiry management
+
+Out-of-stock API
+
+Expiring-soon API
+
+Expired-batch API
+
+Admin-only batch disposal
+
+API pagination
+
+In Progress
+
+React frontend
+
+Frontend dashboard
+
+Frontend role-based UI
+
+API integration with React
+
+Planned
+
+Swagger / OpenAPI documentation
+
+Automated backend tests
+
+PostgreSQL configuration
+
+Dockerization
+
+Production deployment
+
+🔮 Future Improvements
+
+Possible future enhancements include:
+
+PostgreSQL for production database workloads
+
+Docker-based development and deployment
+
+Automated testing with Django/DRF test suites
+
+Swagger/OpenAPI documentation
+
+Improved search and filtering
+
+Barcode / QR-based inventory operations
+
+Advanced analytics dashboard
+
+Demand forecasting
+
+Expiry and stock trend analysis
+
+Production deployment
+
+🎯 Project Highlights
+
+This project focuses on backend engineering and real-world business logic, rather than only CRUD operations.
+
+Key learning areas include:
+
+REST API design
+
+Database modeling
+
+Django ORM
+
+DRF serializers and viewsets
+
+JWT authentication
+
+Role-based authorization
+
+Transaction management
+
+Concurrency-aware stock updates
+
+Inventory business rules
+
+Batch-level stock management
+
+API pagination
+
+Git and GitHub workflow   
 
 
 ## 🙌 Author
 
-**Shimran Tuti**
-Aspiring Full Stack Developer 🚀
+B.Tech Computer Science & Engineering
+BIT Mesra
 
 GitHub: [https://github.com/shimrantuti](https://github.com/shimrantuti)
 

@@ -44,18 +44,24 @@ The system uses a relational database design centered around medicines, batches,
 Main entities
 
 Category
+
    │
    └── Medicine
+   
           │
           └── Batch
+          
                  │
                  └── SalesOrderItem
+                 
                           │
                           └── Order
 
 Supplier
+
    │
    └── PurchaseOrder
+   
           │
           └── PurchaseInvoice
 

@@ -373,23 +373,43 @@ VS Code
 📁 Project Structure
 
 Pharmacy-Management-System/
+
 │
+
 ├── core/
+
 │   ├── settings.py
+
 │   ├── urls.py
+
+
 │   └── ...
+
 │
+
 ├── inventory/
+
 │   ├── models.py
+
 │   ├── serializers.py
+
 │   ├── views.py
+
 │   ├── permissions.py
+
 │   ├── urls.py
+
 │   └── migrations/
+
 │
+
 ├── manage.py
+
 ├── requirements.txt
+
+
 ├── README.md
+
 └── db.sqlite3
 
 🚀 Installation & Setup
